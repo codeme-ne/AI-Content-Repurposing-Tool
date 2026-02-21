@@ -22,6 +22,10 @@
 
 https://github.com/user-attachments/assets/demo-video.mp4
 
+![Social Transformer Demo](public/demo/social-transformer-demo.gif)
+
+Generate platform-ready posts from one input in under a minute, with consistent voice and lower content ops effort.
+
 > **[Try it live →](https://linkedin-posts-one.vercel.app/)**
 
 ---
@@ -293,6 +297,17 @@ CI/CD pipeline includes:
 | `/api/stripe/create-checkout` | POST | Bearer | Stripe checkout session |
 | `/api/stripe/create-portal` | POST | Bearer | Customer portal link |
 | `/api/stripe-webhook-simplified` | POST | Signature | Webhook handler |
+
+---
+
+## Community
+
+- [Contributing Guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [Bug Report Template](.github/ISSUE_TEMPLATE/bug_report.md)
+- [Feature Request Template](.github/ISSUE_TEMPLATE/feature_request.md)
+- [Pull Request Template](.github/PULL_REQUEST_TEMPLATE.md)
 
 ---
 
