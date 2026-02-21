@@ -108,12 +108,8 @@ test.describe('Frontend — Generation flow UI', () => {
   })
 
   test('frontend sends sourceText in generation requests', async ({ page }) => {
-    // Intercept API calls to verify request format
-    let capturedRequest: { sourceText?: string } | null = null
-
     await page.route('**/api/openrouter/v1/chat', async (route) => {
-      const postData = route.request().postDataJSON()
-      capturedRequest = postData
+      route.request().postDataJSON()
       // Abort the request — we only care about the request format
       await route.abort()
     })
@@ -122,7 +118,7 @@ test.describe('Frontend — Generation flow UI', () => {
     // we're testing the request interception pattern is correct)
     await page.goto('/app')
 
-    // The redirect happens before any API call, so capturedRequest stays null.
+    // The redirect happens before any API call.
     // This verifies the route intercept setup works without errors.
     // Actual sourceText testing requires auth, which is covered by the API tests above.
     expect(true).toBe(true)
