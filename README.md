@@ -8,11 +8,11 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?logo=tailwindcss&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-Edge-000000?logo=vercel&logoColor=white)
 ![Tests](https://img.shields.io/badge/Tests-29%20passing-green?logo=vitest&logoColor=white)
-![CI](https://github.com/codeme-ne/linkedin-posts/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/codeme-ne/Blogpost-zu-Socialmedia-Beitrag/actions/workflows/ci.yml/badge.svg)
 
 **AI-powered content transformation platform that converts newsletters and articles into platform-optimized social media posts.**
 
-[Live Demo](https://linkedin-posts-one.vercel.app/) · [Report Bug](https://github.com/codeme-ne/linkedin-posts/issues) · [Request Feature](https://github.com/codeme-ne/linkedin-posts/issues)
+[Live Demo](https://linkedin-posts-one.vercel.app/) · [Report Bug](https://github.com/codeme-ne/Blogpost-zu-Socialmedia-Beitrag/issues) · [Request Feature](https://github.com/codeme-ne/Blogpost-zu-Socialmedia-Beitrag/issues)
 
 </div>
 
@@ -118,8 +118,8 @@ User Input → URL Extraction (optional) → AI Generation → Display → Save/
 
 ```bash
 # Clone repository
-git clone https://github.com/codeme-ne/linkedin-posts.git
-cd linkedin-posts
+git clone https://github.com/codeme-ne/Blogpost-zu-Socialmedia-Beitrag.git
+cd Blogpost-zu-Socialmedia-Beitrag
 
 # Install dependencies
 npm install
@@ -298,7 +298,7 @@ CI/CD pipeline includes:
 
 ## License
 
-Private repository - All rights reserved.
+[MIT](LICENSE)
 
 ---
 
