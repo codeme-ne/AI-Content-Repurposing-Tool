@@ -5,7 +5,7 @@ Date: 2026-02-21
 ## LinkedIn Post Draft
 Problem: Aus langem Content für jede Plattform manuell neue Posts bauen kostet viel Zeit.
 
-Demo: 60-Sekunden Walkthrough im README (`public/demo/social-transformer-demo.gif`).
+Demo: 60-Sekunden Walkthrough im README (`public/demo/social-transformer-2026-02-27.mp4`).
 
 CTA: https://github.com/codeme-ne/Blogpost-zu-Socialmedia-Beitrag
 

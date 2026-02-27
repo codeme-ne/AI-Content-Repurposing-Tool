@@ -20,9 +20,9 @@
 
 ## Demo
 
-https://github.com/user-attachments/assets/demo-video.mp4
+<video src="public/demo/social-transformer-2026-02-27.mp4" controls playsinline muted width="100%"></video>
 
-![Social Transformer Demo](public/demo/social-transformer-demo.gif)
+[Direkt zum Demo-Video](public/demo/social-transformer-2026-02-27.mp4)
 
 Generate platform-ready posts from one input in under a minute, with consistent voice and lower content ops effort.
 
