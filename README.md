@@ -20,7 +20,7 @@
 
 ## Demo
 
-<video src="https://raw.githubusercontent.com/codeme-ne/AI-Content-Repurposing-Tool/main/public/demo/social-transformer-2026-02-27.mp4" controls playsinline muted width="100%"></video>
+[![Social Transformer Demo](public/demo/social-transformer-2026-02-27.gif)](https://raw.githubusercontent.com/codeme-ne/AI-Content-Repurposing-Tool/main/public/demo/social-transformer-2026-02-27.mp4)
 
 [Direkt zum Demo-Video](https://raw.githubusercontent.com/codeme-ne/AI-Content-Repurposing-Tool/main/public/demo/social-transformer-2026-02-27.mp4)
 
