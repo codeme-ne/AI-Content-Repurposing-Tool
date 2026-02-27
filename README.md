@@ -20,9 +20,9 @@
 
 ## Demo
 
-<video src="public/demo/social-transformer-2026-02-27.mp4" controls playsinline muted width="100%"></video>
+<video src="https://raw.githubusercontent.com/codeme-ne/AI-Content-Repurposing-Tool/main/public/demo/social-transformer-2026-02-27.mp4" controls playsinline muted width="100%"></video>
 
-[Direkt zum Demo-Video](public/demo/social-transformer-2026-02-27.mp4)
+[Direkt zum Demo-Video](https://raw.githubusercontent.com/codeme-ne/AI-Content-Repurposing-Tool/main/public/demo/social-transformer-2026-02-27.mp4)
 
 Generate platform-ready posts from one input in under a minute, with consistent voice and lower content ops effort.
 
