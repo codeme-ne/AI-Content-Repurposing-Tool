@@ -1,8 +1,7 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { toast } from "sonner";
 
-// Feature flag and layout components
-import { useFeatureFlag } from "@/hooks/useFeatureFlag";
+// Layout components
 import { UnifiedLayout, type MobileTab } from "@/components/layouts/UnifiedLayout";
 import { EnhancedUrlExtractor } from "@/components/common/EnhancedUrlExtractor";
 import {
@@ -21,14 +20,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // Hooks
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthUI } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useUrlExtraction } from "@/hooks/useUrlExtraction";
-import { useUsageTracking } from "@/hooks/useUsageTracking";
 import { usePostGeneratorState, type GeneratedPost } from "@/hooks/usePostGeneratorState";
-
-// Performance monitoring
-import { perfMonitor, PERF_MARKS, PERF_MEASURES } from "@/utils/performance";
 
 // Types
 import type { Platform } from "@/config/platforms";
@@ -40,11 +35,6 @@ import { useSaveAnimation } from "@/hooks/useSaveAnimation";
 import { FlyingSaveCard } from "@/components/animations/FlyingSaveCard";
 
 export default function GeneratorV2() {
-  // Mark app initialization
-  useEffect(() => {
-    perfMonitor.mark(PERF_MARKS.APP_INIT);
-  }, []);
-
   // Unified state management
   const { state, actions, computed } = usePostGeneratorState();
 
@@ -55,17 +45,10 @@ export default function GeneratorV2() {
   const prevPostCountRef = useRef(0);
 
   // Custom hooks
-  const { userEmail, loginOpen, setLoginOpen } = useAuth();
+  const { userEmail, loginOpen, setLoginOpen } = useAuthUI();
   useSubscription();
-  useUsageTracking();
   const { extractContent, extractionStage } = useUrlExtraction();
   const saveAnimation = useSaveAnimation();
-
-  // Feature flag check
-  const newUxEnabled = useFeatureFlag('NEW_UX', {
-    rolloutPercentage: 100,
-    analyticsEnabled: true
-  });
 
   // Fix Magic Link auth state synchronization
   useEffect(() => {
@@ -93,7 +76,6 @@ export default function GeneratorV2() {
       if (!state.completedSteps.includes('generate')) {
         actions.completeStep('generate');
         actions.setStep('share');
-        perfMonitor.mark(PERF_MARKS.FIRST_POST_RENDERED);
       }
     }
   }, [state.inputText, state.postsByPlatform, state.completedSteps, actions]);
@@ -138,7 +120,6 @@ export default function GeneratorV2() {
   const handleExtract = useCallback(async (url: string) => {
     if (!url) return;
 
-    perfMonitor.mark(PERF_MARKS.EXTRACTION_START);
     actions.startExtraction();
 
     try {
@@ -150,9 +131,6 @@ export default function GeneratorV2() {
         actions.completeExtraction(prefill);
         actions.setSourceUrl(url);
         setExtractorTab('text');
-
-        perfMonitor.mark(PERF_MARKS.EXTRACTION_END);
-        perfMonitor.measure(PERF_MEASURES.EXTRACTION_DURATION, PERF_MARKS.EXTRACTION_START, PERF_MARKS.EXTRACTION_END);
       }
     } catch (error) {
       actions.failExtraction(error instanceof Error ? error.message : 'Extraction failed');
@@ -257,7 +235,6 @@ export default function GeneratorV2() {
             <PlatformGenerators
               content={state.inputText}
               onPostGenerated={(platform, post) => {
-                perfMonitor.mark(PERF_MARKS.GENERATION_END);
                 const generatedPost: GeneratedPost = {
                   content: post,
                   platform,
@@ -370,21 +347,6 @@ export default function GeneratorV2() {
   }, [state.isExtracting, state.extractionProgress, state.extractionStage, state.generationProgress, state.postsByPlatform, state.editingPost,
       computed.isGeneratingAny, computed.isEditing, computed.editingPlatform, computed.editingIndex,
       handleSaveEdit, handleSavePost, handleLinkedInShare, actions]);
-
-  // If feature flag is disabled, show maintenance notice
-  if (!newUxEnabled) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-accent/5 to-secondary flex items-center justify-center px-4">
-        <div className="max-w-xl w-full space-y-4 rounded-2xl border border-border/50 bg-background/80 backdrop-blur-sm p-8 text-center shadow-lg">
-          <h1 className="text-2xl font-semibold">Generator vorübergehend deaktiviert</h1>
-          <p className="text-muted-foreground">
-            Die klassische Version des Generators wurde entfernt. Bitte aktiviere das neue UX-Flag oder
-            wende dich an den Support, falls du weiterhin Zugriff auf den Generator benötigst.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // Main render with UnifiedLayout
   return (

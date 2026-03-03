@@ -31,7 +31,7 @@ export function ExtractButton({
       toast.success('Inhalt erfolgreich extrahiert');
       onExtracted(content, title);
     } catch (error) {
-      console.error('Extraktionsfehler:', error);
+      if (import.meta.env.DEV) console.error('Extraktionsfehler:', error);
       toast.error(
         error instanceof Error
           ? error.message

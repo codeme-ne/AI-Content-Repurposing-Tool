@@ -27,7 +27,6 @@ vi.mock('@/libs/promptBuilder', () => ({
 
 vi.mock('@/libs/api-client', () => ({
   generateOpenRouterMessage: vi.fn(),
-  generateClaudeMessage: vi.fn(),
 }));
 
 describe('useContentGeneration', () => {

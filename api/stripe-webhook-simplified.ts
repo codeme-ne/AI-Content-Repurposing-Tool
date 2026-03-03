@@ -94,6 +94,7 @@ export default async function handler(req: Request) {
       })
     }
     console.error('Webhook recording error:', e)
+    return new Response('Idempotency check failed', { status: 500 })
   }
 
   console.log(`Processing Stripe event: ${event.type}`)

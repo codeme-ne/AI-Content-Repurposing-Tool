@@ -10,7 +10,7 @@ import { checkRequiredClientVars } from '@/lib/env-validation'
 const envValidation = checkRequiredClientVars();
 if (!envValidation.isValid) {
   const errorMessage = `Missing required environment variables: ${envValidation.missing.join(', ')}`;
-  console.error('Configuration Error:', errorMessage);
+  if (import.meta.env.DEV) console.error('Configuration Error:', errorMessage);
 
   // Create error display using safe DOM methods (no innerHTML to avoid XSS)
   const container = document.createElement('div');
@@ -68,7 +68,7 @@ export function BootstrapAuthLink() {
     // Verify the magic URL session
     verifyMagicURL(userId, secret).then(async ({ error }) => {
       if (error) {
-        console.error('Magic URL verification failed:', error)
+        if (import.meta.env.DEV) console.error('Magic URL verification failed:', error)
         cleanupParams()
         return
       }

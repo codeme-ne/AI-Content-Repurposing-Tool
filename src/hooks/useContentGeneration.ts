@@ -17,9 +17,6 @@ interface GenerationProgress {
   completedPlatforms: number
 }
 
-// Maximum number of posts to keep in memory (LRU-like cache)
-const MAX_POSTS = 50
-
 const toError = (error: unknown): Error => {
   if (error instanceof Error) return error
   if (typeof error === 'object' && error !== null && 'message' in error && typeof error.message === 'string') {
@@ -102,7 +99,7 @@ export const useContentGeneration = () => {
           }))
         } else {
           // Batching failed - fall back to parallel calls
-          console.warn('Batched generation failed, falling back to parallel calls')
+          if (import.meta.env.DEV) console.warn('Batched generation failed, falling back to parallel calls')
           newPosts = await executeParallelGeneration(inputText, selectedPlatforms)
         }
       } else {
@@ -251,22 +248,14 @@ export const useContentGeneration = () => {
       // Validate and store
       validatePost(generatedPost, platform)
 
-      setGeneratedPosts((prev) => {
-        const newEntry = {
+      setGeneratedPosts((prev) => ({
+        ...prev,
+        [platform]: {
           post: generatedPost,
           regenerationCount: isRegeneration ? regenerationCount + 1 : 0,
           isEdited: false,
-        }
-        const updated = { ...prev, [platform]: newEntry }
-        const entries = Object.entries(updated)
-
-        // Apply LRU: keep only the last MAX_POSTS entries
-        if (entries.length > MAX_POSTS) {
-          const trimmed = entries.slice(-MAX_POSTS)
-          return Object.fromEntries(trimmed) as typeof prev
-        }
-        return updated
-      })
+        },
+      }))
 
       if (!isRegeneration) {
         decrementUsage()

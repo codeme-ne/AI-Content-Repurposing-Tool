@@ -26,7 +26,7 @@ const allowedOrigins = isDevelopment ? ALLOWED_ORIGINS_DEV : ALLOWED_ORIGINS_PRO
 export function getCorsHeaders(origin: string | null): Record<string, string> {
   const headers: Record<string, string> = {
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, anthropic-version, x-api-key',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, anthropic-version',
     'Access-Control-Max-Age': '86400', // 24 hours
     'Vary': 'Origin', // Important for caching
   };

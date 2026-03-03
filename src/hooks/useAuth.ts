@@ -3,7 +3,7 @@ import { useAuth as useAuthContext } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 import { useSearchParams } from 'react-router-dom'
 
-export const useAuth = () => {
+export const useAuthUI = () => {
   const { user } = useAuthContext()
   const [loginOpen, setLoginOpen] = useState(false)
   const [searchParams, setSearchParams] = useSearchParams()

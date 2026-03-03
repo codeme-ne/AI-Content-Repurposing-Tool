@@ -82,7 +82,7 @@ export default function Landing() {
                       loop
                       muted
                       playsInline
-                      preload="auto"
+                      preload="metadata"
                       onError={() => setVideoError(true)}
                     >
                       <source src="https://pw-bunny.b-cdn.net/Linkedin-Posts-Landing/First%20SaSS.mp4" type="video/mp4" />

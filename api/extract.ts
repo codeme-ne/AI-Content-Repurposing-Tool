@@ -15,98 +15,104 @@ type ExtractResponse = {
   siteName?: string | null;
 };
 
+// End markers that usually indicate footer/archive sections.
+// Compiled into a single RegExp at module initialization for O(n) matching
+// instead of 40+ sequential indexOf calls.
+const END_MARKERS = [
+  // English - Newsletter specific
+  'read past issues',
+  'newsletter archive',
+  'browse our archive',
+  'subscribe',
+  'unsubscribe',
+  'view in browser',
+  'forward to a friend',
+  'forward to friend',
+  'update preferences',
+  'manage preferences',
+  'email preferences',
+  'update your preferences',
+  'update subscription',
+  'manage subscription',
+  'why am i getting this',
+  'you are receiving this',
+  'sent to you because',
+  'mailing list',
+
+  // English - Blog specific
+  'related posts',
+  'you might also like',
+  'you may also like',
+  'see also',
+  'continue reading',
+  'read more posts',
+  'more articles',
+  'similar articles',
+  'related articles',
+  'recommended for you',
+  'more from',
+
+  // German - Newsletter specific
+  'abmelden',
+  'abbestellen',
+  'newsletter abbestellen',
+  'im browser ansehen',
+  'im browser anzeigen',
+  'an einen freund weiterleiten',
+  'weiterleiten',
+  'einstellungen verwalten',
+  'einstellungen ändern',
+  'präferenzen verwalten',
+  'e-mail-einstellungen',
+  'mehr anzeigen',
+
+  // German - Blog specific
+  'weitere artikel',
+  'ähnliche beiträge',
+  'verwandte artikel',
+  'mehr lesen',
+  'weiterlesen',
+  'das könnte sie auch interessieren',
+  'das könnte dich auch interessieren',
+  'siehe auch',
+  'empfohlene artikel',
+  'mehr aus',
+  'verwandte beiträge',
+
+  // Common footer markers (multilingual)
+  '\u00a9',
+  'copyright',
+  'impressum',
+  'datenschutz',
+  'privacy policy',
+  'terms of service',
+  'contact us',
+  'kontakt',
+  'about us',
+  '\u00fcber uns',
+];
+
+const escapeForRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const END_MARKER_REGEX = new RegExp(
+  END_MARKERS.map(escapeForRegex).join('|'),
+  'i'
+);
+
 // Simple function to truncate content at common footer markers
 function truncateContent(content: string): string {
-  // End markers that usually indicate footer/archive sections
-  const endMarkers = [
-    // English - Newsletter specific
-    'read past issues',
-    'newsletter archive',
-    'browse our archive',
-    'subscribe',
-    'unsubscribe',
-    'view in browser',
-    'forward to a friend',
-    'forward to friend',
-    'update preferences',
-    'manage preferences',
-    'email preferences',
-    'update your preferences',
-    'update subscription',
-    'manage subscription',
-    'why am i getting this',
-    'you are receiving this',
-    'sent to you because',
-    'mailing list',
-    
-    // English - Blog specific
-    'related posts',
-    'you might also like',
-    'you may also like',
-    'see also',
-    'continue reading',
-    'read more posts',
-    'more articles',
-    'similar articles',
-    'related articles',
-    'recommended for you',
-    'more from',
-    
-    // German - Newsletter specific
-    'abmelden',
-    'abbestellen',
-    'newsletter abbestellen',
-    'im browser ansehen',
-    'im browser anzeigen',
-    'an einen freund weiterleiten',
-    'weiterleiten',
-    'einstellungen verwalten',
-    'einstellungen ändern',
-    'präferenzen verwalten',
-    'e-mail-einstellungen',
-    'mehr anzeigen',
-    
-    // German - Blog specific
-    'weitere artikel',
-    'ähnliche beiträge',
-    'verwandte artikel',
-    'mehr lesen',
-    'weiterlesen',
-    'das könnte sie auch interessieren',
-    'das könnte dich auch interessieren',
-    'siehe auch',
-    'empfohlene artikel',
-    'mehr aus',
-    'verwandte beiträge',
-    
-    // Common footer markers (multilingual)
-    '©',
-    'copyright',
-    'impressum',
-    'datenschutz',
-    'privacy policy',
-    'terms of service',
-    'contact us',
-    'kontakt',
-    'about us',
-    'über uns',
-  ];
-  
   // Search from 20% of content (newsletter archives can appear early)
   const searchStart = Math.floor(content.length * 0.2);
-  const lowerContent = content.toLowerCase();
-  
-  for (const marker of endMarkers) {
-    const index = lowerContent.indexOf(marker, searchStart);
-    if (index !== -1) {
-      return content.slice(0, index).trim();
-    }
+  const searchContent = content.slice(searchStart);
+  const match = END_MARKER_REGEX.exec(searchContent);
+
+  if (match) {
+    return content.slice(0, searchStart + match.index).trim();
   }
-  
+
   return content;
 }
 
-import { getCorsHeaders } from './utils/cors.js';
+import { createCorsResponse, handlePreflight, getCorsHeaders } from './utils/cors.js';
 import { isUrlSafe } from './utils/urlValidation.js';
 import { verifyJWT } from './utils/appwrite.js';
 import { checkRateLimit, getClientIp } from './utils/rateLimit.js';
@@ -171,20 +177,15 @@ function processContent(rawContent: string, url: string): ExtractResponse {
 }
 
 export default async function handler(req: Request) {
-  // Get CORS headers
   const origin = req.headers.get('origin');
-  const cors = getCorsHeaders(origin);
 
   // Handle preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 200, headers: cors });
+    return handlePreflight(origin);
   }
 
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { ...cors, 'Content-Type': 'application/json' },
-    });
+    return createCorsResponse({ error: 'Method not allowed' }, { status: 405, origin });
   }
 
   // Determine if client wants SSE streaming
@@ -195,45 +196,34 @@ export default async function handler(req: Request) {
     const ip = getClientIp(req);
     const rl = checkRateLimit(`extract:${ip}`, { maxRequests: 30, windowMs: 60_000 });
     if (rl.limited) {
-      return new Response(JSON.stringify({ error: 'Too many requests' }), {
+      return createCorsResponse({ error: 'Too many requests' }, {
         status: 429,
-        headers: { ...cors, 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfterSeconds) },
+        origin,
+        headers: { 'Retry-After': String(rl.retryAfterSeconds) },
       });
     }
 
     // Verify JWT authentication
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Authentication required' }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
+      return createCorsResponse({ error: 'Authentication required' }, { status: 401, origin });
     }
     const token = authHeader.split(' ')[1];
     const user = await verifyJWT(token);
     if (!user) {
-      return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
+      return createCorsResponse({ error: 'Invalid or expired token' }, { status: 401, origin });
     }
 
     const { url } = (await req.json()) as { url?: string };
 
     if (!url || typeof url !== 'string') {
-      return new Response(JSON.stringify({ error: 'Missing url parameter' }), {
-        status: 400,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
+      return createCorsResponse({ error: 'Missing url parameter' }, { status: 400, origin });
     }
 
     // SSRF Protection: Validate URL safety
     const validation = isUrlSafe(url);
     if (!validation.safe) {
-      return new Response(JSON.stringify({ error: validation.error }), {
-        status: 400,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
+      return createCorsResponse({ error: validation.error }, { status: 400, origin });
     }
 
     // Create an AbortController for timeout
@@ -281,7 +271,7 @@ export default async function handler(req: Request) {
       return new Response(stream, {
         status: 200,
         headers: {
-          ...cors,
+          ...getCorsHeaders(origin),
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache, no-transform',
           'X-Accel-Buffering': 'no',
@@ -295,16 +285,13 @@ export default async function handler(req: Request) {
       clearTimeout(timeoutId);
       const payload = processContent(rawContent, url);
 
-      return new Response(JSON.stringify(payload), {
-        status: 200,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
+      return createCorsResponse(payload, { status: 200, origin });
     } catch (fetchError) {
       clearTimeout(timeoutId);
       if (fetchError instanceof Error && fetchError.name === 'AbortError') {
-        return new Response(
-          JSON.stringify({ error: 'Request timed out. The page took too long to load.' }),
-          { status: 504, headers: { ...cors, 'Content-Type': 'application/json' } }
+        return createCorsResponse(
+          { error: 'Request timed out. The page took too long to load.' },
+          { status: 504, origin }
         );
       }
       throw fetchError;
@@ -316,15 +303,12 @@ export default async function handler(req: Request) {
     const errorMessage = error instanceof Error ? error.message : 'Failed to extract content';
     const statusCode = (error as { statusCode?: number }).statusCode || 500;
 
-    return new Response(
-      JSON.stringify({
+    return createCorsResponse(
+      {
         error: errorMessage,
         details: 'Unable to extract content from this URL. Please ensure the URL is accessible and contains readable content.'
-      }),
-      {
-        status: statusCode,
-        headers: { ...cors, 'Content-Type': 'application/json' }
-      }
+      },
+      { status: statusCode, origin }
     );
   }
 }

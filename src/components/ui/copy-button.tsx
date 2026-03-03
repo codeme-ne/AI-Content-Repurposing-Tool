@@ -39,7 +39,7 @@ export function CopyButton({
       setCopied(true);
       onCopy?.();
     } catch (err) {
-      console.error('Failed to copy text:', err);
+      if (import.meta.env.DEV) console.error('Failed to copy text:', err);
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = text;
@@ -54,7 +54,7 @@ export function CopyButton({
         onCopy?.();
         // Timer cleanup handled by useEffect
       } catch (err) {
-        console.error('Fallback copy failed:', err);
+        if (import.meta.env.DEV) console.error('Fallback copy failed:', err);
       }
       document.body.removeChild(textArea);
     }

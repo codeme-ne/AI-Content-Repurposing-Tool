@@ -20,7 +20,7 @@ export function CustomerPortalButton({ className, children }: CustomerPortalButt
       await openCustomerPortal();
     } catch (error) {
       // Error is already handled by the hook
-      console.error('Portal error:', error);
+      if (import.meta.env.DEV) console.error('Portal error:', error);
     } finally {
       setIsOpening(false);
     }

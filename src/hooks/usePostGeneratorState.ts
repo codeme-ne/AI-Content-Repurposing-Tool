@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useEffect } from 'react';
+import { useReducer, useCallback, useEffect, useMemo } from 'react';
 import type { Platform } from '@/config/platforms';
 import type { WorkflowStep } from '@/components/common/WorkflowStepper';
 import type { ExtractionStage } from '@/api/extract';
@@ -495,7 +495,7 @@ function postGeneratorReducer(
 export function usePostGeneratorState() {
   const [state, dispatch] = useReducer(postGeneratorReducer, initialState);
 
-  // Auto-save to localStorage
+  // Auto-save to localStorage (debounced to reduce writes)
   useEffect(() => {
     if (state.isDirty && state.inputText) {
       const savedState = {
@@ -503,7 +503,10 @@ export function usePostGeneratorState() {
         sourceUrl: state.sourceUrl,
         selectedPlatforms: state.selectedPlatforms,
       };
-      localStorage.setItem('postGeneratorDraft', JSON.stringify(savedState));
+      const timer = setTimeout(() => {
+        localStorage.setItem('postGeneratorDraft', JSON.stringify(savedState));
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [state.isDirty, state.inputText, state.sourceUrl, state.selectedPlatforms]);
 
@@ -523,110 +526,158 @@ export function usePostGeneratorState() {
           dispatch({ type: 'SET_PLATFORMS', platforms: parsed.selectedPlatforms });
         }
       } catch (e) {
-        console.error('Failed to load draft:', e);
+        if (import.meta.env.DEV) console.error('Failed to load draft:', e);
       }
     }
   }, []);
 
-  // Action creators
-  const actions = {
-    setStep: useCallback((step: WorkflowStep) => {
-      dispatch({ type: 'SET_STEP', step });
-    }, []),
+  // Action creators (individual stable refs for useMemo dependency list)
+  const setStep = useCallback((step: WorkflowStep) => {
+    dispatch({ type: 'SET_STEP', step });
+  }, []);
 
-    completeStep: useCallback((step: WorkflowStep) => {
-      dispatch({ type: 'COMPLETE_STEP', step });
-    }, []),
+  const completeStep = useCallback((step: WorkflowStep) => {
+    dispatch({ type: 'COMPLETE_STEP', step });
+  }, []);
 
-    setSourceUrl: useCallback((url: string) => {
-      dispatch({ type: 'SET_SOURCE_URL', url });
-    }, []),
+  const setSourceUrl = useCallback((url: string) => {
+    dispatch({ type: 'SET_SOURCE_URL', url });
+  }, []);
 
-    setInputText: useCallback((text: string) => {
-      dispatch({ type: 'SET_INPUT_TEXT', text });
-    }, []),
+  const setInputText = useCallback((text: string) => {
+    dispatch({ type: 'SET_INPUT_TEXT', text });
+  }, []);
 
-    togglePlatform: useCallback((platform: Platform) => {
-      dispatch({ type: 'TOGGLE_PLATFORM', platform });
-    }, []),
+  const togglePlatform = useCallback((platform: Platform) => {
+    dispatch({ type: 'TOGGLE_PLATFORM', platform });
+  }, []);
 
-    startExtraction: useCallback(() => {
-      dispatch({ type: 'START_EXTRACTION' });
-    }, []),
+  const startExtraction = useCallback(() => {
+    dispatch({ type: 'START_EXTRACTION' });
+  }, []);
 
-    completeExtraction: useCallback((content: string) => {
-      dispatch({ type: 'COMPLETE_EXTRACTION', content });
-    }, []),
+  const completeExtraction = useCallback((content: string) => {
+    dispatch({ type: 'COMPLETE_EXTRACTION', content });
+  }, []);
 
-    failExtraction: useCallback((error: string) => {
-      dispatch({ type: 'FAIL_EXTRACTION', error });
-    }, []),
+  const failExtraction = useCallback((error: string) => {
+    dispatch({ type: 'FAIL_EXTRACTION', error });
+  }, []);
 
-    startGeneration: useCallback((platform: Platform) => {
-      dispatch({ type: 'START_GENERATION', platform });
-    }, []),
+  const startGeneration = useCallback((platform: Platform) => {
+    dispatch({ type: 'START_GENERATION', platform });
+  }, []);
 
-    completeGeneration: useCallback((platform: Platform, post: GeneratedPost) => {
-      dispatch({ type: 'COMPLETE_GENERATION', platform, post });
-    }, []),
+  const completeGeneration = useCallback((platform: Platform, post: GeneratedPost) => {
+    dispatch({ type: 'COMPLETE_GENERATION', platform, post });
+  }, []);
 
-    failGeneration: useCallback((platform: Platform, error: string) => {
-      dispatch({ type: 'FAIL_GENERATION', platform, error });
-    }, []),
+  const failGeneration = useCallback((platform: Platform, error: string) => {
+    dispatch({ type: 'FAIL_GENERATION', platform, error });
+  }, []);
 
-    setGenerationProgress: useCallback(
-      (current: Platform | null, completed: number, total: number) => {
-        dispatch({ type: 'SET_GENERATION_PROGRESS', current, completed, total });
-      },
-      []
-    ),
+  const setGenerationProgress = useCallback(
+    (current: Platform | null, completed: number, total: number) => {
+      dispatch({ type: 'SET_GENERATION_PROGRESS', current, completed, total });
+    },
+    []
+  );
 
-    setExtractionProgress: useCallback((progress: number) => {
-      dispatch({ type: 'SET_EXTRACTION_PROGRESS', progress });
-    }, []),
+  const setExtractionProgress = useCallback((progress: number) => {
+    dispatch({ type: 'SET_EXTRACTION_PROGRESS', progress });
+  }, []);
 
-    setExtractionStage: useCallback((stage: ExtractionStage | 'idle') => {
-      dispatch({ type: 'SET_EXTRACTION_STAGE', stage });
-    }, []),
+  const setExtractionStage = useCallback((stage: ExtractionStage | 'idle') => {
+    dispatch({ type: 'SET_EXTRACTION_STAGE', stage });
+  }, []);
 
-    markSaved: useCallback(() => {
-      dispatch({ type: 'MARK_SAVED' });
-    }, []),
+  const markSaved = useCallback(() => {
+    dispatch({ type: 'MARK_SAVED' });
+  }, []);
 
-    resetWorkflow: useCallback(() => {
-      localStorage.removeItem('postGeneratorDraft');
-      dispatch({ type: 'RESET_WORKFLOW' });
-    }, []),
+  const resetWorkflow = useCallback(() => {
+    localStorage.removeItem('postGeneratorDraft');
+    dispatch({ type: 'RESET_WORKFLOW' });
+  }, []);
 
-    clearErrors: useCallback(() => {
-      dispatch({ type: 'CLEAR_ERRORS' });
-    }, []),
+  const clearErrors = useCallback(() => {
+    dispatch({ type: 'CLEAR_ERRORS' });
+  }, []);
 
-    // Editing actions
-    startEdit: useCallback((platform: Platform, index: number, content: string) => {
-      dispatch({ type: 'START_EDIT', platform, index, content });
-    }, []),
+  const startEdit = useCallback((platform: Platform, index: number, content: string) => {
+    dispatch({ type: 'START_EDIT', platform, index, content });
+  }, []);
 
-    updateEditingContent: useCallback((content: string) => {
-      dispatch({ type: 'UPDATE_EDITING_CONTENT', content });
-    }, []),
+  const updateEditingContent = useCallback((content: string) => {
+    dispatch({ type: 'UPDATE_EDITING_CONTENT', content });
+  }, []);
 
-    saveEdit: useCallback(() => {
-      dispatch({ type: 'SAVE_EDIT' });
-    }, []),
+  const saveEdit = useCallback(() => {
+    dispatch({ type: 'SAVE_EDIT' });
+  }, []);
 
-    cancelEdit: useCallback(() => {
-      dispatch({ type: 'CANCEL_EDIT' });
-    }, []),
+  const cancelEdit = useCallback(() => {
+    dispatch({ type: 'CANCEL_EDIT' });
+  }, []);
 
-    deletePost: useCallback((platform: Platform, index: number) => {
-      dispatch({ type: 'DELETE_POST', platform, index });
-    }, []),
+  const deletePost = useCallback((platform: Platform, index: number) => {
+    dispatch({ type: 'DELETE_POST', platform, index });
+  }, []);
 
-    regeneratePost: useCallback((platform: Platform, index: number) => {
-      dispatch({ type: 'REGENERATE_POST', platform, index });
-    }, []),
-  };
+  const regeneratePost = useCallback((platform: Platform, index: number) => {
+    dispatch({ type: 'REGENERATE_POST', platform, index });
+  }, []);
+
+  // Memoized actions object: stable reference since all callbacks have [] deps
+  const actions = useMemo(() => ({
+    setStep,
+    completeStep,
+    setSourceUrl,
+    setInputText,
+    togglePlatform,
+    startExtraction,
+    completeExtraction,
+    failExtraction,
+    startGeneration,
+    completeGeneration,
+    failGeneration,
+    setGenerationProgress,
+    setExtractionProgress,
+    setExtractionStage,
+    markSaved,
+    resetWorkflow,
+    clearErrors,
+    startEdit,
+    updateEditingContent,
+    saveEdit,
+    cancelEdit,
+    deletePost,
+    regeneratePost,
+  }), [
+    setStep,
+    completeStep,
+    setSourceUrl,
+    setInputText,
+    togglePlatform,
+    startExtraction,
+    completeExtraction,
+    failExtraction,
+    startGeneration,
+    completeGeneration,
+    failGeneration,
+    setGenerationProgress,
+    setExtractionProgress,
+    setExtractionStage,
+    markSaved,
+    resetWorkflow,
+    clearErrors,
+    startEdit,
+    updateEditingContent,
+    saveEdit,
+    cancelEdit,
+    deletePost,
+    regeneratePost,
+  ]);
 
   // Computed values
   const computed = {

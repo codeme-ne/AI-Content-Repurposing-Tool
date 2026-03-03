@@ -366,7 +366,7 @@ export default function Settings() {
                             try {
                               await openCustomerPortal();
                             } catch (error) {
-                              console.error('Portal error:', error);
+                              if (import.meta.env.DEV) console.error('Portal error:', error);
                             } finally {
                               setIsOpeningPortal(false);
                             }

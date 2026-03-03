@@ -17,7 +17,7 @@ export interface ApiClientConfig {
 }
 
 export interface RequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: 'GET' | 'POST';
   body?: unknown;
   headers?: Record<string, string>;
   timeout?: number;
@@ -244,17 +244,6 @@ export class ApiClient {
     return this.request<T>(endpoint, { ...options, method: 'POST', body });
   }
 
-  async put<T = unknown>(endpoint: string, body?: unknown, options: Omit<RequestOptions, 'method' | 'body'> = {}): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: 'PUT', body });
-  }
-
-  async delete<T = unknown>(endpoint: string, options: Omit<RequestOptions, 'method'> = {}): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: 'DELETE' });
-  }
-
-  async patch<T = unknown>(endpoint: string, body?: unknown, options: Omit<RequestOptions, 'method' | 'body'> = {}): Promise<T> {
-    return this.request<T>(endpoint, { ...options, method: 'PATCH', body });
-  }
 }
 
 // Create default API client instance
@@ -269,15 +258,6 @@ export const get = <T = unknown>(endpoint: string, options?: Omit<RequestOptions
 
 export const post = <T = unknown>(endpoint: string, body?: unknown, options?: Omit<RequestOptions, 'method' | 'body'>) =>
   apiClient.post<T>(endpoint, body, options);
-
-export const put = <T = unknown>(endpoint: string, body?: unknown, options?: Omit<RequestOptions, 'method' | 'body'>) =>
-  apiClient.put<T>(endpoint, body, options);
-
-export const del = <T = unknown>(endpoint: string, options?: Omit<RequestOptions, 'method'>) =>
-  apiClient.delete<T>(endpoint, options);
-
-export const patch = <T = unknown>(endpoint: string, body?: unknown, options?: Omit<RequestOptions, 'method' | 'body'>) =>
-  apiClient.patch<T>(endpoint, body, options);
 
 // Customer Portal specific function
 export const createCustomerPortal = async (returnUrl: string): Promise<{ url: string }> => {
@@ -353,10 +333,3 @@ export async function generateOpenRouterMessage(
   }
 }
 
-// Backward-compatible alias during migration.
-export const generateClaudeMessage = generateOpenRouterMessage
-
-export type ClaudeMessageRequestMessage = OpenRouterMessageRequestMessage
-export type ClaudeMessageRequestBody = OpenRouterMessageRequestBody
-export type ClaudeContentBlock = OpenRouterContentBlock
-export type ClaudeMessageResponse = OpenRouterMessageResponse

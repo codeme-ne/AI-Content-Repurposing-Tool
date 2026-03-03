@@ -230,14 +230,14 @@ export function parseBatchedResponse(
     // Verify all requested platforms have content
     for (const platform of platforms) {
       if (!result[platform] || result[platform].length === 0) {
-        console.warn(`Batched parsing failed: missing content for ${platform}`);
+        if (import.meta.env.DEV) console.warn(`Batched parsing failed: missing content for ${platform}`);
         return null; // Signal fallback to parallel calls
       }
     }
 
     return result;
   } catch (error) {
-    console.error('Batched parsing error:', error);
+    if (import.meta.env.DEV) console.error('Batched parsing error:', error);
     return null; // Signal fallback to parallel calls
   }
 }

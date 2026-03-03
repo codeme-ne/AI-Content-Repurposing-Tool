@@ -45,7 +45,7 @@ function HighlightedContent({ content, platform }: { content: string; platform: 
   return (
     <>
       {parts.map((part, i) =>
-        hashtagRegex.test(part) ? (
+        part.startsWith('#') ? (
           <span key={i} className="text-purple-600 font-medium">{part}</span>
         ) : (
           <span key={i}>{part}</span>

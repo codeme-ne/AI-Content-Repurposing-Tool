@@ -5,6 +5,8 @@
 // - Deepgram for audio speech-to-text: DEEPGRAM_API_KEY
 
 import { createCorsResponse, handlePreflight } from './utils/cors.js';
+import { verifyJWT } from './utils/appwrite.js';
+import { checkRateLimit, getClientIp } from './utils/rateLimit.js';
 
 export const config = { runtime: 'edge' } as const;
 
@@ -129,6 +131,33 @@ export default async function handler(req: Request) {
     return createCorsResponse({ error: 'Method not allowed' }, { status: 405, origin });
   }
   try {
+    // Rate limiting: 10 requests per minute per IP
+    const ip = getClientIp(req);
+    const rl = checkRateLimit(`extract-file:${ip}`, { maxRequests: 10, windowMs: 60_000 });
+    if (rl.limited) {
+      return createCorsResponse(
+        { error: 'Too many requests', code: 'RATE_LIMITED' },
+        { status: 429, origin, headers: { 'Retry-After': String(rl.retryAfterSeconds) } }
+      );
+    }
+
+    // Verify JWT authentication
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return createCorsResponse(
+        { error: 'Authentication required', code: 'AUTH_REQUIRED' },
+        { status: 401, origin }
+      );
+    }
+    const token = authHeader.split(' ')[1];
+    const user = await verifyJWT(token);
+    if (!user) {
+      return createCorsResponse(
+        { error: 'Invalid or expired token', code: 'AUTH_INVALID' },
+        { status: 401, origin }
+      );
+    }
+
     const form = await req.formData();
     const files = form.getAll('file').filter((v): v is File => v instanceof File);
     if (!files.length) {

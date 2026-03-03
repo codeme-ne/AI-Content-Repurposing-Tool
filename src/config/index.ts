@@ -19,17 +19,7 @@ export {
 // Environment configuration
 export {
   env,
-  getEnvVar,
-  getEnvVarWithFallback,
-  isDevelopment,
-  isProduction,
-  getStripePaymentLinks,
-  getAppwriteConfig,
-  getLinkedInConfig,
-  getOpenRouterConfig,
-  getClaudeConfig,
-  getAppUrls,
-  initializeEnvironment
+  checkRequiredClientVars,
 } from '../lib/env-validation';
 export type {
   EnvironmentVariables,

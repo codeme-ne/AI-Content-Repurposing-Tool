@@ -44,7 +44,7 @@ export function UpgradeModal({ isOpen, onClose, trigger = 'usage_limit' }: Upgra
         throw new Error('No checkout URL received');
       }
     } catch (error) {
-      console.error('Checkout error:', error);
+      if (import.meta.env.DEV) console.error('Checkout error:', error);
       toast.error('Fehler beim Erstellen der Checkout-Session. Bitte versuche es erneut.');
     } finally {
       setIsProcessing(false);

@@ -1,4 +1,4 @@
-import { Client, Databases, Users, Query } from 'node-appwrite'
+import { Account, Client, Databases, ID, Users, Query } from 'node-appwrite'
 
 const DB_ID = 'social_transformer'
 
@@ -8,18 +8,22 @@ function requireEnv(name: string): string {
   return value
 }
 
-// Server-side Appwrite client with API key (bypasses permissions)
-function createServerClient() {
-  const client = new Client()
-    .setEndpoint(requireEnv('APPWRITE_ENDPOINT'))
-    .setProject(requireEnv('APPWRITE_PROJECT_ID'))
-    .setKey(requireEnv('APPWRITE_API_KEY'))
+// Lazy singleton for server-side Appwrite client with API key (bypasses permissions)
+let _serverClient: { client: Client; databases: Databases; users: Users } | null = null
 
-  return {
-    client,
-    databases: new Databases(client),
-    users: new Users(client),
+function getServerClient() {
+  if (!_serverClient) {
+    const client = new Client()
+      .setEndpoint(requireEnv('APPWRITE_ENDPOINT'))
+      .setProject(requireEnv('APPWRITE_PROJECT_ID'))
+      .setKey(requireEnv('APPWRITE_API_KEY'))
+    _serverClient = {
+      client,
+      databases: new Databases(client),
+      users: new Users(client),
+    }
   }
+  return _serverClient
 }
 
 // Verify JWT token and return user info
@@ -32,7 +36,6 @@ export async function verifyJWT(token: string): Promise<{ id: string; email: str
       .setJWT(token)
 
     // If the JWT is valid, we can get the account info
-    const { Account } = await import('node-appwrite')
     const account = new Account(client)
     const user = await account.get()
 
@@ -44,7 +47,7 @@ export async function verifyJWT(token: string): Promise<{ id: string; email: str
 
 // Get user ID by email using server SDK
 export async function getUserIdByEmail(email: string): Promise<string | null> {
-  const { users } = createServerClient()
+  const { users } = getServerClient()
   try {
     const result = await users.list([Query.equal('email', [email])])
     if (result.users.length > 0) {
@@ -58,10 +61,8 @@ export async function getUserIdByEmail(email: string): Promise<string | null> {
 
 // Create a new user (for webhook user creation)
 export async function createUser(email: string): Promise<{ id: string } | null> {
-  const { users } = createServerClient()
+  const { users } = getServerClient()
   try {
-    // Generate a unique ID
-    const { ID } = await import('node-appwrite')
     const user = await users.create(ID.unique(), email)
     return { id: user.$id }
   } catch (error) {
@@ -72,11 +73,11 @@ export async function createUser(email: string): Promise<{ id: string } | null> 
 
 // Export server databases for direct use
 export function getServerDatabases() {
-  return createServerClient().databases
+  return getServerClient().databases
 }
 
 export function getServerUsers() {
-  return createServerClient().users
+  return getServerClient().users
 }
 
 export { DB_ID, Query }

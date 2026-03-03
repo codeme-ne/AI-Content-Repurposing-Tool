@@ -69,6 +69,19 @@ export default async function handler(req: Request) {
       return createCorsResponse({ error: 'Price ID is required' }, { status: 400, origin })
     }
 
+    // Validate priceId against allowed Stripe price IDs to prevent arbitrary price injection
+    const ALLOWED_PRICE_IDS = [
+      process.env.STRIPE_MONTHLY_PRICE_ID,
+      process.env.STRIPE_YEARLY_PRICE_ID,
+    ].filter(Boolean);
+
+    if (!ALLOWED_PRICE_IDS.includes(priceId)) {
+      return createCorsResponse(
+        { error: 'Invalid price ID', code: 'INVALID_PRICE' },
+        { status: 400, origin }
+      );
+    }
+
     if (!successUrl || !cancelUrl) {
       return createCorsResponse({ error: 'Success and cancel URLs are required' }, { status: 400, origin })
     }

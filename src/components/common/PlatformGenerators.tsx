@@ -30,7 +30,7 @@ export function PlatformGenerators({ content, onPostGenerated }: PlatformGenerat
       const post = await generateSinglePost(content, platform)
       onPostGenerated?.(platform, post)
     } catch (error) {
-      console.error(`Generation failed for ${platform}:`, error)
+      if (import.meta.env.DEV) console.error(`Generation failed for ${platform}:`, error)
     }
   }
 
@@ -39,7 +39,7 @@ export function PlatformGenerators({ content, onPostGenerated }: PlatformGenerat
       const post = await regeneratePost(content, platform)
       if (post) onPostGenerated?.(platform, post)
     } catch (error) {
-      console.error(`Regeneration failed for ${platform}:`, error)
+      if (import.meta.env.DEV) console.error(`Regeneration failed for ${platform}:`, error)
     }
   }
 

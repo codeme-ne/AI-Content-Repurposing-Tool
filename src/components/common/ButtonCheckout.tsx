@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Loader2, Zap } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthUI } from '@/hooks/useAuth'
 import { createJWT } from '@/api/appwrite'
 
 interface ButtonCheckoutProps {
@@ -23,7 +23,7 @@ export function ButtonCheckout({
   variant = 'default'
 }: ButtonCheckoutProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const { userEmail } = useAuth()
+  const { userEmail } = useAuthUI()
 
   const handleCheckout = async () => {
     setIsLoading(true)
