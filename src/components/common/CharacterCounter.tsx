@@ -210,6 +210,7 @@ interface CharacterCounterTextareaProps extends CharacterCounterProps {
   autoFocus?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
+  mode?: 'default' | 'minimal';
 }
 
 export function CharacterCounterTextarea({
@@ -225,11 +226,54 @@ export function CharacterCounterTextarea({
   onChange,
   onFocus,
   onBlur,
+  mode = 'default',
 }: CharacterCounterTextareaProps) {
   const limit = maxLength || (platform ? PLATFORM_LIMITS[platform].max : 1000);
   const charCount = value.length;
   const percentage = (charCount / limit) * 100;
   const isOverLimit = charCount > limit;
+  const isNearLimit = charCount > limit * 0.8;
+  const counterColorClass = isOverLimit
+    ? 'text-red-500'
+    : isNearLimit
+    ? 'text-yellow-600'
+    : 'text-muted-foreground';
+
+  if (mode === 'minimal') {
+    return (
+      <div className="space-y-2">
+        <textarea
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          placeholder={placeholder}
+          rows={rows}
+          disabled={disabled}
+          autoFocus={autoFocus}
+          maxLength={isOverLimit ? undefined : limit}
+          className={cn(
+            "w-full resize-y rounded-xl border bg-background px-4 py-3 text-[15px] leading-7",
+            "transition-all duration-200",
+            "focus:outline-none focus:ring-2",
+            isOverLimit
+              ? "border-red-500 focus:ring-red-500/20"
+              : isNearLimit
+              ? "border-yellow-500 focus:ring-yellow-500/20"
+              : "border-input focus:ring-primary/20",
+            disabled && "cursor-not-allowed opacity-50",
+            className
+          )}
+        />
+
+        <div className="flex justify-end">
+          <span className={cn("text-xs font-medium tabular-nums", counterColorClass)}>
+            {charCount}/{limit}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">

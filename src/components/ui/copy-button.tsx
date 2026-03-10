@@ -10,6 +10,7 @@ interface CopyButtonProps {
   size?: 'default' | 'sm' | 'lg' | 'icon';
   label?: string;
   onCopy?: () => void;
+  title?: string;
 }
 
 export function CopyButton({
@@ -19,6 +20,7 @@ export function CopyButton({
   size = 'icon',
   label = 'Kopieren',
   onCopy,
+  title,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
@@ -70,7 +72,8 @@ export function CopyButton({
         copied && 'text-green-600',
         className
       )}
-      title={copied ? 'Kopiert!' : label}
+      title={copied ? 'Kopiert!' : (title || label)}
+      aria-label={copied ? 'Kopiert!' : label}
     >
       {copied ? (
         <>
