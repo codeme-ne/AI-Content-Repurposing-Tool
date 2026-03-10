@@ -1,0 +1,90 @@
+Title: 🪙 Chaos to productivity gold
+
+URL Source: https://www.neurohackingly.com/chaos-to-productivity-gold
+
+Published Time: 2025-06-23T22:37:40.000Z
+
+Markdown Content:
+Ever feel like you’re drowning in complex tasks with no roadmap?
+
+I’ve been there. Until I discovered these two game-changers.
+
+Problem #1: “I know WHAT I want, but not HOW to get there”
+----------------------------------------------------------
+
+**Solution: Gemini’s Checklist Superpower 💎**
+
+Last month, [my AI course](https://www.produktiv.me/ki/) sold out in 72 hours. But setting it up? A nightmare.
+
+□ Registration forms
+
+□ Payment processing
+
+□ Course access system
+
+So I did what I always do when things get complicated.
+
+I sketched it out.
+
+![Image 1: Rough workflow diagram sketched in Figjam](https://www.neurohackingly.com/images/chaos-to-productivity-gold/image-4.png)
+
+A rough workflow in Figjam
+
+Then I prompted Gemini:
+
+> Create a detailed checklist of what I need to do to follow the workflow described in the diagram. Fill any gaps or things I may have missed. Keep it as simple, but also as detailed as possible.
+
+Prompt Gemini for checklist. Export to Google Docs. Enjoy the satisfaction of checking off boxes.
+
+17 happy participants. Zero tech headaches.
+
+Problem #2: “Creating presentations takes so long”
+--------------------------------------------------
+
+**Solution: Claude as Your Writing, Design and Tech Team ✴️**
+
+Prezi wants $180/year. Claude Pro does it better.
+
+I love Prezi’s interactive storylines.
+
+I did the following:
+
+1. Searched for a Prezi presentation I liked.
+2. Took some screenshots of slides.
+3. Recorded a voice memo of the context I need the presentation for.
+4. Asked Claude to create a 40 slide presentation in HTML, CSS and JavaScript.
+
+That’s how I turned a boring presentation into a premium desert island experience.
+
+One prompt = 80% done.
+
+There is even a treasure map in the upper right corner that you can fold out to see where you are.
+
+It even made a workbook.
+
+Time saved: 8 hours.
+
+What’s the ONE task you’d love to delegate to AI this week?
+
+Have a great week,
+
+Lukas
+
+📱Launching This Week: The 1-Click Design Tool That Transforms Your Content Into Art
+------------------------------------------------------------------------------------
+
+I’m currently testing my new app “Imagine” that’s launching this week.
+
+1. You just paste a URL - a blog post, product page, or an article you like.
+2. The app generates a beautifully designed visual that perfectly captures your content.
+
+Sign up for my newsletter and be among the first to try it out.
+
+![Image 2: Example artwork](https://www.neurohackingly.com/images/chaos-to-productivity-gold/www-neurohackingly-com-chaos-to-productivity-gold--image-3--1.png)
+
+[](https://twitter.com/intent/tweet?text=Chaos&url=https%3A%2F%2Fwww.neurohackingly.com%2Fchaos-to-productivity-gold "Share on X")[](https://linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.neurohackingly.com%2Fchaos-to-productivity-gold "Share on LinkedIn")
+
+You might also like
+-------------------
+
+* [💡Productivity Boost Jul 15, 2024](https://www.neurohackingly.com/productivity-boost)

@@ -1,0 +1,38 @@
+Title: Claude 3.7 Sonnet and Claude Code
+
+URL Source: https://www.anthropic.com/news/claude-3-7-sonnet
+
+Published Time: 2025-02-24T17:00:00.000Z
+
+Markdown Content:
+Today, we’re announcing Claude 3.7 Sonnet, our most intelligent model to date and the first hybrid reasoning model on the market.
+
+Claude 3.7 Sonnet shows particularly strong improvements in coding and front-end web development. Along with the model, we’re also introducing Claude Code, a command line tool for agentic coding.
+
+![Image 1: Screen showing Claude Code onboarding](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2Fclaude-code.png&w=3840&q=75)
+
+Claude 3.7 Sonnet is now available on all Claude plans, the Claude Developer Platform, Amazon Bedrock, and Google Cloud’s Vertex AI.
+
+Claude 3.7 Sonnet: Frontier reasoning made practical
+----------------------------------------------------
+
+We’ve developed Claude 3.7 Sonnet with a different philosophy from other reasoning models on the market. Just as humans use a single brain for both quick responses and deep reflection, we believe reasoning should be an integrated capability of frontier models rather than a separate model entirely.
+
+Claude 3.7 Sonnet is both an ordinary LLM and a reasoning model in one. In standard mode, Claude 3.7 Sonnet represents an upgraded version of Claude 3.5 Sonnet. In extended thinking mode, it self-reflects before answering, which improves its performance on math, physics, instruction-following, coding, and many other tasks.
+
+When using Claude 3.7 Sonnet through the API, users can control the budget for thinking and trade off speed for quality of answer.
+
+Early testing demonstrated Claude’s leadership in coding capabilities across the board. Cursor noted Claude is once again best-in-class for real-world coding tasks. Vercel highlighted Claude’s precision for complex agent workflows.
+
+Since June 2024, Sonnet has been the preferred model for developers worldwide. Today, we're empowering developers further by introducing Claude Code in a limited research preview.
+
+Related content
+---------------
+
+### Partnering with Mozilla to improve Firefox’s security
+
+[Read more](https://www.anthropic.com/news/mozilla-firefox-security)
+
+### Statement on the comments from Secretary of War Pete Hegseth
+
+[Read more](https://www.anthropic.com/news/statement-comments-secretary-war)

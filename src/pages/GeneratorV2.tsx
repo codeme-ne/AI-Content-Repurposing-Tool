@@ -30,6 +30,7 @@ import type { Platform } from "@/config/platforms";
 import { PLATFORM_LABEL, PLATFORM_META } from "@/config/platforms";
 import { savePost } from "@/api/appwrite";
 import { createLinkedInShareUrl } from "@/api/linkedin";
+import { buildExtractionPrefill } from "@/libs/extractionPrefill";
 
 import { useSaveAnimation } from "@/hooks/useSaveAnimation";
 import { FlyingSaveCard } from "@/components/animations/FlyingSaveCard";
@@ -125,9 +126,7 @@ export default function GeneratorV2() {
     try {
       const result = await extractContent(url);
       if (result) {
-        const prefill = [result.title, result.content]
-          .filter(Boolean)
-          .join("\n\n");
+        const prefill = buildExtractionPrefill(result.title, result.content);
         actions.completeExtraction(prefill);
         actions.setSourceUrl(url);
         setExtractorTab('text');
@@ -302,7 +301,6 @@ export default function GeneratorV2() {
                       key={index}
                       platform={platform}
                       content={postContent}
-                      index={index}
                       isEditing={isEditingThis}
                       editContent={state.editingPost?.content || ''}
                       onEditContentChange={(value) => actions.updateEditingContent(value)}

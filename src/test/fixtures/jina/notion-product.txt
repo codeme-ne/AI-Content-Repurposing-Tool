@@ -1,0 +1,43 @@
+Title: Meet your AI team | Notion
+
+URL Source: https://www.notion.so/product/ai
+
+Markdown Content:
+Meet your 24/7 AI team
+======================
+
+Infinite minds, built for teamwork. Answer questions, prioritize tasks, and write reports all while you sleep.
+
+[Try for free](https://www.notion.so/signup?from=marketing&pathname=%2Fproduct%2Fai)[Request a demo](https://www.notion.so/contact-sales)
+
+Trusted by teams at
+
+![Image 1: OpenAI](https://www.notion.so/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fopenai.png&w=3840&q=75)
+
+> If it’s something that’s repetitive, we have a Notion Agent for it.
+
+**Ben Levick** Head of AI & Operations, Ramp
+
+Custom Agents run on schedules or triggers and complete multi-step work across your workspace and connected tools.
+
+**What are Notion credits?**
+
+Custom Agents run on Notion credits. Notion credits are available as an add-on to Business and Enterprise plans for teams that need always-on automation.
+
+**When do Notion credits go into effect?**
+
+Now through May 3, 2026:
+
+Custom Agents are free to use on Business and Enterprise plans during this period, and admins can track usage in the Notion credits dashboard.
+
+Starting May 4, 2026:
+
+Custom Agents will start using Notion credits when they run.
+
+[Contact sales ->](https://www.notion.so/contact-sales)
+
+How can I learn more about Notion AI?
+
+Visit our [Help Center](https://www.notion.so/help/notion-ai-faqs) and [Notion Academy](https://academy.notion.com/) for guides, examples, and best practices.
+
+![Image 22](https://analytics.twitter.com/1/i/adsct?bci=4)

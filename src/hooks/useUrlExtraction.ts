@@ -21,6 +21,7 @@ const extractionCache = new Map<string, {
 }>()
 
 const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+const LOW_CONFIDENCE_HINT = 'Am besten funktionieren Artikel oder Newsletter statt Produktseiten.'
 
 // Client-side timer schedule (ms → stage). Provides immediate visual
 // feedback while SSE events may be buffered by CDN/proxy layers.
@@ -115,8 +116,13 @@ export const useUrlExtraction = () => {
     } catch (e) {
       clearTimers()
       setExtractionStage('error')
-      toast.error(`Import fehlgeschlagen - ${e instanceof Error ? e.message : String(e)}`)
-      return null
+      const message = e instanceof Error ? e.message : String(e)
+      if (message.includes(LOW_CONFIDENCE_HINT)) {
+        toast.warning(message)
+      } else {
+        toast.error(`Import fehlgeschlagen - ${message}`)
+      }
+      throw e
     } finally {
       setIsExtracting(false)
     }
