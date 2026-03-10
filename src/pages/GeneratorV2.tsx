@@ -301,6 +301,7 @@ export default function GeneratorV2() {
                       key={index}
                       platform={platform}
                       content={postContent}
+                      index={index}
                       isEditing={isEditingThis}
                       editContent={state.editingPost?.content || ''}
                       onEditContentChange={(value) => actions.updateEditingContent(value)}
